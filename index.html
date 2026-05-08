@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Vision Control - Sistema de reconocimiento facial para entrega segura de tarjetas bancarias por dron">
+    
+    <title>Vision Control</title>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <!-- ============================================== -->
+    <!-- PANTALLA 1: BIENVENIDA / LOGIN                  -->
+    <!-- ============================================== -->
+    <section class="screen active" id="screen-welcome">
+        <div class="container">
+            <div class="hero">
+                <div class="logo">
+                    <div class="logo-icon">🛸</div>
+                    <h1 class="logo-text">Vision Control</h1>
+                </div>
+                
+                <h2 class="hero-title">
+                    Tu tarjeta,<br>
+                    <span class="gradient-text">a la velocidad del vuelo.</span>
+                </h2>
+                
+                <p class="hero-subtitle">
+                    Identificación biométrica.<br>
+                    Entrega aérea segura.<br>
+                    Solo para ti.
+                </p>
+                
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="goToScreen('verify')">
+                        Recibir mi tarjeta
+                    </button>
+                    <button class="btn btn-secondary" onclick="goToScreen('register')">
+                        Registrarme por primera vez
+                    </button>
+                </div>
+            </div>
+            
+            <div class="footer-info">
+                <p>UPQ · Proyecto Integrador · Ingeniería en Mecatrónica</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 2: REGISTRO                            -->
+    <!-- ============================================== -->
+    <section class="screen" id="screen-register">
+        <div class="container">
+            <button class="btn-back" onclick="goToScreen('welcome')">‹ Atrás</button>
+            
+            <div class="content">
+                <h2 class="section-title">Registro</h2>
+                <p class="section-subtitle">Necesitamos tu información para identificarte de forma segura.</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" class="form-input" placeholder="Ej. Martin Flores Soto" id="input-nombre">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">CURP</label>
+                    <input type="text" class="form-input" placeholder="18 caracteres" maxlength="18" id="input-curp">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Número de cliente</label>
+                    <input type="text" class="form-input" placeholder="Ej. 1234567890" id="input-cliente">
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="alert('Próximamente: captura facial')">
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 3: VERIFICACIÓN FACIAL                 -->
+    <!-- ============================================== -->
+    <section class="screen" id="screen-verify">
+        <div class="container">
+            <button class="btn-back" onclick="goToScreen('welcome')">‹ Atrás</button>
+            
+            <div class="content">
+                <h2 class="section-title">Verificación facial</h2>
+                <p class="section-subtitle">Mira de frente a la cámara.<br>Mantén tu rostro centrado.</p>
+                
+                <div class="camera-frame">
+                    <div class="camera-placeholder">
+                        <span class="camera-icon">📷</span>
+                        <p>Aquí irá la cámara</p>
+                        <p class="small">(la conectaremos en el siguiente paso)</p>
+                    </div>
+                </div>
+                
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Esperando rostro...</span>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToScreen('result-success')">
+                    [Demo] Simular reconocimiento exitoso
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 4: RESULTADO EXITOSO                   -->
+    <!-- ============================================== -->
+    <section class="screen" id="screen-result-success">
+        <div class="container result-screen success">
+            <div class="result-icon-wrapper">
+                <div class="result-icon">✓</div>
+            </div>
+            
+            <h2 class="result-title">Autorizado</h2>
+            <p class="result-subtitle">Tu identidad ha sido verificada.<br>El dron entregará tu tarjeta en breve.</p>
+            
+            <div class="result-info">
+                <div class="info-item">
+                    <span class="info-label">Cliente</span>
+                    <span class="info-value">Martin Flores Soto</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Match</span>
+                    <span class="info-value">98.7%</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Hora</span>
+                    <span class="info-value" id="result-time">--:--</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-full" onclick="goToScreen('welcome')">
+                Volver al inicio
+            </button>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 5: RESULTADO DENEGADO                  -->
+    <!-- ============================================== -->
+    <section class="screen" id="screen-result-fail">
+        <div class="container result-screen fail">
+            <div class="result-icon-wrapper">
+                <div class="result-icon">✕</div>
+            </div>
+            
+            <h2 class="result-title">No autorizado</h2>
+            <p class="result-subtitle">No pudimos verificar tu identidad.<br>Por favor, intenta de nuevo.</p>
+            
+            <div class="cta-buttons">
+                <button class="btn btn-primary btn-full" onclick="goToScreen('verify')">
+                    Reintentar
+                </button>
+                <button class="btn btn-secondary btn-full" onclick="goToScreen('welcome')">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
