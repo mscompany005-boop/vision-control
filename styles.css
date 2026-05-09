@@ -24,6 +24,55 @@ body {
 }
 
 /* ============================================= */
+/* LOADER GLOBAL                                 */
+/* ============================================= */
+
+.global-loader {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.global-loader.active {
+    display: flex;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader-spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 24px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #00d4ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loader-text {
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.loader-subtext {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================= */
 /* SISTEMA DE PANTALLAS                          */
 /* ============================================= */
 
@@ -121,7 +170,7 @@ body {
 }
 
 /* ============================================= */
-/* BOTONES (estilo Apple)                        */
+/* BOTONES                                       */
 /* ============================================= */
 
 .btn {
@@ -147,6 +196,13 @@ body {
     transform: scale(0.98);
 }
 
+.btn-primary:disabled {
+    background: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+    transform: none;
+}
+
 .btn-secondary {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
@@ -160,9 +216,7 @@ body {
     transform: scale(0.98);
 }
 
-.btn-full {
-    width: 100%;
-}
+.btn-full { width: 100%; }
 
 .btn-back {
     align-self: flex-start;
@@ -176,17 +230,13 @@ body {
     margin-bottom: 30px;
 }
 
-.btn-back:hover {
-    color: #fff;
-}
+.btn-back:hover { color: #fff; }
 
 /* ============================================= */
-/* CONTENIDO DE OTRAS PANTALLAS                  */
+/* TÍTULOS DE SECCIÓN                            */
 /* ============================================= */
 
-.content {
-    flex: 1;
-}
+.content { flex: 1; }
 
 .section-title {
     font-size: 36px;
@@ -206,9 +256,7 @@ body {
 /* FORMULARIO                                    */
 /* ============================================= */
 
-.form-group {
-    margin-bottom: 20px;
-}
+.form-group { margin-bottom: 20px; }
 
 .form-label {
     display: block;
@@ -250,41 +298,88 @@ body {
     width: 100%;
     aspect-ratio: 1;
     max-width: 360px;
-    margin: 0 auto 30px;
+    margin: 0 auto 24px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 24px;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
     position: relative;
 }
 
-.camera-placeholder {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.4);
+.camera-frame video,
+.camera-frame canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1); /* Espejo, como cámara frontal */
 }
 
-.camera-icon {
-    font-size: 64px;
-    display: block;
-    margin-bottom: 12px;
+.camera-frame canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
 }
 
-.camera-placeholder .small {
-    font-size: 13px;
-    margin-top: 6px;
-    color: rgba(255, 255, 255, 0.3);
+.face-guide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    aspect-ratio: 1;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: all 0.3s ease;
 }
+
+.face-guide.detected {
+    border-color: #00ff88;
+    border-style: solid;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+}
+
+.face-guide.recognized {
+    border-color: #00d4ff;
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+}
+
+/* ============================================= */
+/* PROGRESO DE CAPTURA (3 puntitos)              */
+/* ============================================= */
+
+.capture-progress {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.progress-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+.progress-dot.completed {
+    background: #00ff88;
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+}
+
+/* ============================================= */
+/* STATUS                                        */
+/* ============================================= */
 
 .status-indicator {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 30px;
-    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 15px;
 }
 
@@ -297,13 +392,32 @@ body {
     animation: pulse 1.5s ease-in-out infinite;
 }
 
+.status-dot.detected {
+    background: #00ff88;
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+    animation: none;
+}
+
+.status-dot.error {
+    background: #ff4757;
+    box-shadow: 0 0 12px rgba(255, 71, 87, 0.6);
+    animation: none;
+}
+
 @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.4; transform: scale(0.85); }
 }
 
+.match-info {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    font-family: 'SF Mono', Consolas, monospace;
+}
+
 /* ============================================= */
-/* PANTALLAS DE RESULTADO                        */
+/* RESULTADOS                                    */
 /* ============================================= */
 
 .result-screen {
@@ -400,11 +514,10 @@ body {
     .hero-title { font-size: 38px; }
     .section-title { font-size: 28px; }
     .result-title { font-size: 34px; }
+    .container { padding: 40px 20px 30px; }
 }
 
 @media (min-width: 768px) {
-    .container {
-        max-width: 540px;
-    }
+    .container { max-width: 540px; }
     .hero-title { font-size: 64px; }
 }

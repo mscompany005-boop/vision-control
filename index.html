@@ -9,11 +9,27 @@
     <title>Vision Control</title>
     
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Librería face-api.js (CDN) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <!-- Firebase JS SDK -->
+    <script type="module" src="firebase.js"></script>
 </head>
 <body>
     
     <!-- ============================================== -->
-    <!-- PANTALLA 1: BIENVENIDA / LOGIN                  -->
+    <!-- LOADER GLOBAL                                   -->
+    <!-- ============================================== -->
+    <div class="global-loader" id="global-loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p class="loader-text" id="loader-text">Cargando IA...</p>
+            <p class="loader-subtext">Esto solo pasa la primera vez</p>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 1: BIENVENIDA                          -->
     <!-- ============================================== -->
     <section class="screen active" id="screen-welcome">
         <div class="container">
@@ -59,7 +75,7 @@
             
             <div class="content">
                 <h2 class="section-title">Registro</h2>
-                <p class="section-subtitle">Necesitamos tu información para identificarte de forma segura.</p>
+                <p class="section-subtitle">Llena tus datos. Necesitamos identificarte de forma segura.</p>
                 
                 <div class="form-group">
                     <label class="form-label">Nombre completo</label>
@@ -76,46 +92,77 @@
                     <input type="text" class="form-input" placeholder="Ej. 1234567890" id="input-cliente">
                 </div>
                 
-                <button class="btn btn-primary btn-full" onclick="alert('Próximamente: captura facial')">
-                    Continuar
+                <button class="btn btn-primary btn-full" onclick="iniciarCapturaRegistro()">
+                    Continuar a captura facial
                 </button>
             </div>
         </div>
     </section>
 
     <!-- ============================================== -->
-    <!-- PANTALLA 3: VERIFICACIÓN FACIAL                 -->
+    <!-- PANTALLA 3: CAPTURA DE 3 FOTOS                  -->
+    <!-- ============================================== -->
+    <section class="screen" id="screen-capture">
+        <div class="container">
+            <button class="btn-back" onclick="cancelarCaptura()">‹ Cancelar</button>
+            
+            <div class="content">
+                <h2 class="section-title">Captura facial</h2>
+                <p class="section-subtitle" id="capture-instruction">Mira de frente. Toma 3 fotos para registrarte.</p>
+                
+                <div class="camera-frame">
+                    <video id="capture-video" autoplay muted playsinline></video>
+                    <canvas id="capture-canvas"></canvas>
+                    <div class="face-guide" id="capture-guide"></div>
+                </div>
+                
+                <div class="capture-progress">
+                    <div class="progress-dot" id="dot-1"></div>
+                    <div class="progress-dot" id="dot-2"></div>
+                    <div class="progress-dot" id="dot-3"></div>
+                </div>
+                
+                <div class="status-indicator">
+                    <span class="status-dot" id="capture-status-dot"></span>
+                    <span class="status-text" id="capture-status">Buscando rostro...</span>
+                </div>
+                
+                <button class="btn btn-primary btn-full" id="capture-btn" onclick="capturarFoto()" disabled>
+                    Tomar foto 1 de 3
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PANTALLA 4: VERIFICACIÓN FACIAL                 -->
     <!-- ============================================== -->
     <section class="screen" id="screen-verify">
         <div class="container">
-            <button class="btn-back" onclick="goToScreen('welcome')">‹ Atrás</button>
+            <button class="btn-back" onclick="detenerVerificacion()">‹ Atrás</button>
             
             <div class="content">
                 <h2 class="section-title">Verificación facial</h2>
                 <p class="section-subtitle">Mira de frente a la cámara.<br>Mantén tu rostro centrado.</p>
                 
                 <div class="camera-frame">
-                    <div class="camera-placeholder">
-                        <span class="camera-icon">📷</span>
-                        <p>Aquí irá la cámara</p>
-                        <p class="small">(la conectaremos en el siguiente paso)</p>
-                    </div>
+                    <video id="verify-video" autoplay muted playsinline></video>
+                    <canvas id="verify-canvas"></canvas>
+                    <div class="face-guide" id="verify-guide"></div>
                 </div>
                 
                 <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Esperando rostro...</span>
+                    <span class="status-dot" id="verify-status-dot"></span>
+                    <span class="status-text" id="verify-status">Iniciando cámara...</span>
                 </div>
                 
-                <button class="btn btn-primary btn-full" onclick="goToScreen('result-success')">
-                    [Demo] Simular reconocimiento exitoso
-                </button>
+                <p class="match-info" id="match-info"></p>
             </div>
         </div>
     </section>
 
     <!-- ============================================== -->
-    <!-- PANTALLA 4: RESULTADO EXITOSO                   -->
+    <!-- PANTALLA 5: RESULTADO EXITOSO                   -->
     <!-- ============================================== -->
     <section class="screen" id="screen-result-success">
         <div class="container result-screen success">
@@ -129,11 +176,11 @@
             <div class="result-info">
                 <div class="info-item">
                     <span class="info-label">Cliente</span>
-                    <span class="info-value">Martin Flores Soto</span>
+                    <span class="info-value" id="result-name">--</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Match</span>
-                    <span class="info-value">98.7%</span>
+                    <span class="info-label">Confianza</span>
+                    <span class="info-value" id="result-confidence">--</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Hora</span>
@@ -148,7 +195,7 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- PANTALLA 5: RESULTADO DENEGADO                  -->
+    <!-- PANTALLA 6: RESULTADO DENEGADO                  -->
     <!-- ============================================== -->
     <section class="screen" id="screen-result-fail">
         <div class="container result-screen fail">
@@ -157,7 +204,7 @@
             </div>
             
             <h2 class="result-title">No autorizado</h2>
-            <p class="result-subtitle">No pudimos verificar tu identidad.<br>Por favor, intenta de nuevo.</p>
+            <p class="result-subtitle" id="fail-reason">No pudimos verificar tu identidad.<br>Por favor, intenta de nuevo.</p>
             
             <div class="cta-buttons">
                 <button class="btn btn-primary btn-full" onclick="goToScreen('verify')">
