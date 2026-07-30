@@ -3,95 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Vision Control - Sistema de reconocimiento facial para entrega segura de tarjetas bancarias por dron">
-    
-    <title>Vision Control</title>
-    
+    <meta name="theme-color" content="#060A16">
+    <meta name="description" content="Vision Control — Entrega aérea de tarjetas bancarias con identidad verificada por reconocimiento facial.">
+    <title>Vision Control · Entrega aérea segura</title>
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Librería face-api.js (CDN) -->
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <!-- Firebase JS SDK -->
     <script type="module" src="firebase.js"></script>
 </head>
 <body>
-    
+
     <!-- ============================================== -->
     <!-- LOADER GLOBAL                                   -->
     <!-- ============================================== -->
     <div class="global-loader" id="global-loader">
         <div class="loader-content">
             <div class="loader-spinner"></div>
-            <p class="loader-text" id="loader-text">Cargando IA...</p>
+            <p class="loader-text" id="loader-text">Cargando IA…</p>
             <p class="loader-subtext">Esto solo pasa la primera vez</p>
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 1: BIENVENIDA                          -->
-    <!-- ============================================== -->
-    <section class="screen active" id="screen-welcome">
-        <div class="container">
-            <div class="hero">
-                <div class="logo">
-                    <div class="logo-icon">🛸</div>
-                    <h1 class="logo-text">Vision Control</h1>
+    <!-- ============================================================ -->
+    <!-- LANDING (pantalla de presentación)                           -->
+    <!-- ============================================================ -->
+    <section class="screen active" id="screen-landing">
+
+        <!-- NAV FIJO -->
+        <nav class="nav" id="nav">
+            <div class="nav-inner">
+                <div class="brand">
+                    <span class="brand-mark">◈</span>
+                    <span class="brand-name">Vision&nbsp;Control</span>
                 </div>
-                
-                <h2 class="hero-title">
+                <div class="nav-links">
+                    <a href="#como" class="nav-link">Cómo funciona</a>
+                    <a href="#seguridad" class="nav-link">Seguridad</a>
+                    <a href="#tecnologia" class="nav-link">Tecnología</a>
+                </div>
+                <button class="nav-cta" onclick="goToScreen('verify')">Recibir tarjeta</button>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-glow"></div>
+            <div class="hero-grid"></div>
+            <div class="hero-content reveal">
+                <div class="hero-badge">
+                    <span class="pulse-dot"></span> UPQ · Ingeniería en Mecatrónica
+                </div>
+                <h1 class="hero-title">
                     Tu tarjeta,<br>
-                    <span class="gradient-text">a la velocidad del vuelo.</span>
-                </h2>
-                
-                <p class="hero-subtitle">
-                    Identificación biométrica.<br>
-                    Entrega aérea segura.<br>
-                    Solo para ti.
+                    <span class="grad">a la velocidad<br>del vuelo.</span>
+                </h1>
+                <p class="hero-sub">
+                    Entrega aérea de tarjetas bancarias con identidad
+                    verificada por reconocimiento facial. Segura, rastreable y sin contacto.
                 </p>
-                
-                <div class="cta-buttons">
+                <div class="hero-actions">
                     <button class="btn btn-primary" onclick="goToScreen('verify')">
                         Recibir mi tarjeta
                     </button>
-                    <button class="btn btn-secondary" onclick="goToScreen('register')">
-                        Registrarme por primera vez
+                    <button class="btn btn-ghost" onclick="goToScreen('register')">
+                        Registrarme →
                     </button>
                 </div>
+                <div class="hero-stats">
+                    <div class="stat"><b>2</b><span>verificaciones</span></div>
+                    <div class="stat-div"></div>
+                    <div class="stat"><b>&lt;3s</b><span>reconocimiento</span></div>
+                    <div class="stat-div"></div>
+                    <div class="stat"><b>100%</b><span>rastreable</span></div>
+                </div>
             </div>
-            
-            <div class="footer-info">
-                <p>UPQ · Proyecto Integrador · Ingeniería en Mecatrónica</p>
+
+            <!-- DRON REAL (foto) -->
+            <div class="hero-drone reveal">
+                <div class="drone-float">
+                    <img src="img/dron-hero.jpg" alt="Dron FPV con mecanismo de entrega" class="drone-photo">
+                </div>
+                <p class="drone-caption">Prototipo FPV real · UPQ 2026</p>
             </div>
-        </div>
+
+            <div class="scroll-hint">
+                <span>Descubre cómo funciona</span>
+                <div class="scroll-arrow">↓</div>
+            </div>
+        </header>
+
+        <!-- ================= CÓMO FUNCIONA ================= -->
+        <section class="section" id="como">
+            <div class="section-head reveal">
+                <span class="eyebrow">Proceso</span>
+                <h2 class="section-title">Tres pasos.<br>Cero contacto.</h2>
+                <p class="section-lead">Desde tu registro hasta la entrega, todo verificado.</p>
+            </div>
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step-num">01</div>
+                    <h3>Regístrate con tu rostro</h3>
+                    <p>Abre la app, ingresa tus datos y captura tu rostro. Tu identidad biométrica queda lista de forma segura.</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">02</div>
+                    <h3>El dron llega y te reconoce</h3>
+                    <p>Cuando el dron aterriza, la app confirma que eres tú. El operador verifica visualmente por la cámara del dron.</p>
+                </div>
+                <div class="step reveal">
+                    <div class="step-num">03</div>
+                    <h3>Recibe tu tarjeta</h3>
+                    <p>Con la doble verificación aprobada, el mecanismo libera tu tarjeta. La entrega queda registrada para auditoría.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SEGURIDAD ================= -->
+        <section class="section section-dark" id="seguridad">
+            <div class="sec-two">
+                <div class="sec-two-text reveal">
+                    <span class="eyebrow">Seguridad</span>
+                    <h2 class="section-title">Doble verificación.<br>Una sola tarjeta para ti.</h2>
+                    <p class="section-lead">Nadie más puede recibir lo que es tuyo.</p>
+                    <ul class="feature-list">
+                        <li><span class="check">✓</span><div><b>Verificación facial del cliente</b><p>El reconocimiento se hace en tu propio dispositivo con IA.</p></div></li>
+                        <li><span class="check">✓</span><div><b>Confirmación visual del operador</b><p>Un segundo par de ojos humano valida la entrega por la cámara del dron.</p></div></li>
+                        <li><span class="check">✓</span><div><b>Registro auditable en la nube</b><p>Cada entrega guarda hora, confianza y resultado para trazabilidad total.</p></div></li>
+                    </ul>
+                </div>
+                <div class="sec-two-visual reveal">
+                    <div class="photo-card">
+                        <img src="img/dron-electronica.jpg" alt="Electrónica del dron con ESP32" class="photo-card-img">
+                        <div class="photo-card-tag">
+                            <span class="pulse-dot"></span> Sistema de control a bordo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TECNOLOGÍA ================= -->
+        <section class="section" id="tecnologia">
+            <div class="section-head reveal">
+                <span class="eyebrow">Tecnología</span>
+                <h2 class="section-title">Ingeniería que<br>entrega confianza.</h2>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-card reveal">
+                    <div class="tech-ic">◎</div>
+                    <h3>Reconocimiento facial con IA</h3>
+                    <p>Redes neuronales que identifican al cliente en tiempo real, directamente en el navegador.</p>
+                </div>
+                <div class="tech-card reveal">
+                    <div class="tech-ic">✈</div>
+                    <h3>Dron FPV de radiocontrol</h3>
+                    <p>Plataforma aérea con cámara en vivo y mecanismo de liberación controlado por microcontrolador.</p>
+                </div>
+                <div class="tech-card reveal">
+                    <div class="tech-ic">☁</div>
+                    <h3>Nube en tiempo real</h3>
+                    <p>Autorizaciones e historial sincronizados al instante entre cliente y operador.</p>
+                </div>
+                <div class="tech-card reveal">
+                    <div class="tech-ic">⚙</div>
+                    <h3>Mecanismo servo-actuado</h3>
+                    <p>Compartimento de carga diseñado en CAD que libera la tarjeta solo con autorización.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PROTOTIPO (galería) ================= -->
+        <section class="section section-dark" id="prototipo">
+            <div class="section-head reveal">
+                <span class="eyebrow">El prototipo</span>
+                <h2 class="section-title">Del diseño CAD<br>al vuelo real.</h2>
+                <p class="section-lead">Diseñado, impreso y ensamblado por el equipo.</p>
+            </div>
+            <div class="proto-grid">
+                <div class="proto-item proto-big reveal">
+                    <img src="img/dron-frame.jpg" alt="Frame del dron con motores">
+                    <div class="proto-cap">Estructura FPV · motores brushless y hélices tri-pala</div>
+                </div>
+                <div class="proto-item reveal">
+                    <img src="img/dron-cad.jpg" alt="Diseño CAD del compartimento de entrega">
+                    <div class="proto-cap">Compartimento de entrega · diseño CAD con servo</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CTA FINAL ================= -->
+        <section class="cta-final">
+            <div class="cta-inner reveal">
+                <h2>¿Listo para recibir tu tarjeta?</h2>
+                <p>El dron está en camino. Verifica tu identidad en segundos.</p>
+                <div class="hero-actions center">
+                    <button class="btn btn-primary" onclick="goToScreen('verify')">Recibir mi tarjeta</button>
+                    <button class="btn btn-ghost" onclick="goToScreen('register')">Registrarme →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= FOOTER ================= -->
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="brand">
+                    <span class="brand-mark">◈</span>
+                    <span class="brand-name">Vision Control</span>
+                </div>
+                <p class="footer-text">
+                    Prototipo de dron de radiocontrol para entrega segura de tarjetas bancarias.<br>
+                    Universidad Politécnica de Querétaro · Proyecto Integrador · Ingeniería en Mecatrónica · 2026
+                </p>
+            </div>
+        </footer>
     </section>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 2: REGISTRO                            -->
-    <!-- ============================================== -->
+    <!-- ============================================================ -->
+    <!-- PANTALLA: REGISTRO                                            -->
+    <!-- ============================================================ -->
     <section class="screen" id="screen-register">
-        <div class="container">
-            <button class="btn-back" onclick="goToScreen('welcome')">‹ Atrás</button>
-            
+        <div class="app-container">
+            <button class="btn-back" onclick="goToScreen('landing')">‹ Inicio</button>
             <div class="content">
-                <h2 class="section-title">Registro</h2>
+                <h2 class="section-title-app">Registro</h2>
                 <p class="section-subtitle">Llena tus datos. Necesitamos identificarte de forma segura.</p>
-                
                 <div class="form-group">
                     <label class="form-label">Nombre completo</label>
                     <input type="text" class="form-input" placeholder="Ej. Martin Flores Soto" id="input-nombre">
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">CURP</label>
                     <input type="text" class="form-input" placeholder="18 caracteres" maxlength="18" id="input-curp">
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Número de cliente</label>
                     <input type="text" class="form-input" placeholder="Ej. 1234567890" id="input-cliente">
                 </div>
-                
                 <button class="btn btn-primary btn-full" onclick="iniciarCapturaRegistro()">
                     Continuar a captura facial
                 </button>
@@ -99,34 +245,28 @@
         </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 3: CAPTURA DE 3 FOTOS                  -->
-    <!-- ============================================== -->
+    <!-- ============================================================ -->
+    <!-- PANTALLA: CAPTURA DE 3 FOTOS                                  -->
+    <!-- ============================================================ -->
     <section class="screen" id="screen-capture">
-        <div class="container">
+        <div class="app-container">
             <button class="btn-back" onclick="cancelarCaptura()">‹ Cancelar</button>
-            
             <div class="content">
-                <h2 class="section-title">Captura facial</h2>
+                <h2 class="section-title-app">Captura facial</h2>
                 <p class="section-subtitle" id="capture-instruction">Mira de frente. Toma 3 fotos para registrarte.</p>
-                
                 <div class="camera-frame">
                     <video id="capture-video" autoplay muted playsinline></video>
-                    <canvas id="capture-canvas"></canvas>
                     <div class="face-guide" id="capture-guide"></div>
                 </div>
-                
                 <div class="capture-progress">
                     <div class="progress-dot" id="dot-1"></div>
                     <div class="progress-dot" id="dot-2"></div>
                     <div class="progress-dot" id="dot-3"></div>
                 </div>
-                
                 <div class="status-indicator">
                     <span class="status-dot" id="capture-status-dot"></span>
-                    <span class="status-text" id="capture-status">Buscando rostro...</span>
+                    <span class="status-text" id="capture-status">Buscando rostro…</span>
                 </div>
-                
                 <button class="btn btn-primary btn-full" id="capture-btn" onclick="capturarFoto()" disabled>
                     Tomar foto 1 de 3
                 </button>
@@ -134,85 +274,56 @@
         </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 4: VERIFICACIÓN FACIAL                 -->
-    <!-- ============================================== -->
+    <!-- ============================================================ -->
+    <!-- PANTALLA: VERIFICACIÓN                                        -->
+    <!-- ============================================================ -->
     <section class="screen" id="screen-verify">
-        <div class="container">
-            <button class="btn-back" onclick="detenerVerificacion()">‹ Atrás</button>
-            
+        <div class="app-container">
+            <button class="btn-back" onclick="detenerVerificacion()">‹ Inicio</button>
             <div class="content">
-                <h2 class="section-title">Verificación facial</h2>
+                <h2 class="section-title-app">Verificación facial</h2>
                 <p class="section-subtitle">Mira de frente a la cámara.<br>Mantén tu rostro centrado.</p>
-                
                 <div class="camera-frame">
                     <video id="verify-video" autoplay muted playsinline></video>
-                    <canvas id="verify-canvas"></canvas>
                     <div class="face-guide" id="verify-guide"></div>
                 </div>
-                
                 <div class="status-indicator">
                     <span class="status-dot" id="verify-status-dot"></span>
-                    <span class="status-text" id="verify-status">Iniciando cámara...</span>
+                    <span class="status-text" id="verify-status">Iniciando cámara…</span>
                 </div>
-                
                 <p class="match-info" id="match-info"></p>
             </div>
         </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 5: RESULTADO EXITOSO                   -->
-    <!-- ============================================== -->
+    <!-- ============================================================ -->
+    <!-- PANTALLA: ÉXITO                                               -->
+    <!-- ============================================================ -->
     <section class="screen" id="screen-result-success">
-        <div class="container result-screen success">
-            <div class="result-icon-wrapper">
-                <div class="result-icon">✓</div>
-            </div>
-            
+        <div class="app-container result-screen success">
+            <div class="result-icon-wrapper"><div class="result-icon">✓</div></div>
             <h2 class="result-title">Autorizado</h2>
             <p class="result-subtitle">Tu identidad ha sido verificada.<br>El dron entregará tu tarjeta en breve.</p>
-            
             <div class="result-info">
-                <div class="info-item">
-                    <span class="info-label">Cliente</span>
-                    <span class="info-value" id="result-name">--</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Confianza</span>
-                    <span class="info-value" id="result-confidence">--</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Hora</span>
-                    <span class="info-value" id="result-time">--:--</span>
-                </div>
+                <div class="info-item"><span class="info-label">Cliente</span><span class="info-value" id="result-name">--</span></div>
+                <div class="info-item"><span class="info-label">Confianza</span><span class="info-value" id="result-confidence">--</span></div>
+                <div class="info-item"><span class="info-label">Hora</span><span class="info-value" id="result-time">--:--</span></div>
             </div>
-            
-            <button class="btn btn-primary btn-full" onclick="goToScreen('welcome')">
-                Volver al inicio
-            </button>
+            <button class="btn btn-primary btn-full" onclick="goToScreen('landing')">Volver al inicio</button>
         </div>
     </section>
 
-    <!-- ============================================== -->
-    <!-- PANTALLA 6: RESULTADO DENEGADO                  -->
-    <!-- ============================================== -->
+    <!-- ============================================================ -->
+    <!-- PANTALLA: DENEGADO                                            -->
+    <!-- ============================================================ -->
     <section class="screen" id="screen-result-fail">
-        <div class="container result-screen fail">
-            <div class="result-icon-wrapper">
-                <div class="result-icon">✕</div>
-            </div>
-            
+        <div class="app-container result-screen fail">
+            <div class="result-icon-wrapper"><div class="result-icon">✕</div></div>
             <h2 class="result-title">No autorizado</h2>
             <p class="result-subtitle" id="fail-reason">No pudimos verificar tu identidad.<br>Por favor, intenta de nuevo.</p>
-            
             <div class="cta-buttons">
-                <button class="btn btn-primary btn-full" onclick="goToScreen('verify')">
-                    Reintentar
-                </button>
-                <button class="btn btn-secondary btn-full" onclick="goToScreen('welcome')">
-                    Cancelar
-                </button>
+                <button class="btn btn-primary btn-full" onclick="goToScreen('verify')">Reintentar</button>
+                <button class="btn btn-ghost btn-full" onclick="goToScreen('landing')">Cancelar</button>
             </div>
         </div>
     </section>
