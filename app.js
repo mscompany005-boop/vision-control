@@ -11,14 +11,22 @@ const state = {
     datosRegistro:{nombre:'',curp:'',cliente:''}
 };
 
-// ---------- CARGA DE MODELOS ----------
-window.addEventListener('load', async () => {
-    // Animaciones de la landing
+// ---------- CARGA DE MODELOS (en segundo plano, no bloquea la página) ----------
+window.addEventListener('load', () => {
+    // La landing se muestra de inmediato. Animaciones primero.
     initScrollReveal();
     initNavScroll();
+    // Cargar modelos de IA en segundo plano (sin loader que tape la página)
+    cargarModelos();
+});
 
-    mostrarLoader('Cargando IA…');
+async function cargarModelos(){
     try {
+        if (typeof faceapi === 'undefined') {
+            console.warn('face-api.js aún no disponible, reintentando…');
+            setTimeout(cargarModelos, 800);
+            return;
+        }
         const MODEL_URL = './models';
         await Promise.all([
             faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
@@ -27,12 +35,10 @@ window.addEventListener('load', async () => {
         ]);
         state.modelosListos = true;
         console.log('✅ Modelos de IA cargados');
-        ocultarLoader();
     } catch (e) {
         console.error('Error cargando modelos:', e);
-        actualizarLoader('Error cargando IA. Refresca la página.');
     }
-});
+}
 
 // ---------- LOADER ----------
 function mostrarLoader(t){document.getElementById('loader-text').textContent=t;
@@ -113,12 +119,28 @@ async function iniciarCapturaRegistro(){
     state.datosRegistro={nombre,curp,cliente};
     state.descripciones=[];state.fotosTomadas=0;
     goToScreen('capture');
-    if(!state.modelosListos){alert('Los modelos de IA aún no están listos. Espera unos segundos.');return;}
+    if(!state.modelosListos){
+        mostrarLoader('Cargando IA…');
+        await esperarModelos();
+        ocultarLoader();
+    }
     const video=document.getElementById('capture-video');
     await iniciarCamara(video);
     iniciarLoopDeteccion(video,'capture');
 }
 window.iniciarCapturaRegistro = iniciarCapturaRegistro;
+
+// Espera a que los modelos terminen de cargar (máx ~20s)
+function esperarModelos(){
+    return new Promise((resolve)=>{
+        let intentos=0;
+        const check=()=>{
+            if(state.modelosListos||intentos>40){resolve();return;}
+            intentos++;setTimeout(check,500);
+        };
+        check();
+    });
+}
 
 function iniciarLoopDeteccion(videoElement,modo){
     state.intervaloDeteccion=setInterval(async()=>{
@@ -187,7 +209,12 @@ window.cancelarCaptura = cancelarCaptura;
 
 // ---------- VERIFICACIÓN ----------
 async function iniciarVerificacion(){
-    if(!state.modelosListos){alert('Los modelos de IA aún no están listos.');goToScreen('landing');return;}
+    if(!state.modelosListos){
+        mostrarLoader('Cargando IA…');
+        await esperarModelos();
+        ocultarLoader();
+    }
+    if(!state.modelosListos){alert('No se pudieron cargar los modelos de IA. Revisa tu conexión y recarga.');goToScreen('landing');return;}
     const usuarios=JSON.parse(localStorage.getItem('vc_usuarios')||'[]');
     if(usuarios.length===0){alert('No hay usuarios registrados. Regístrate primero.');goToScreen('register');return;}
     const video=document.getElementById('verify-video');
